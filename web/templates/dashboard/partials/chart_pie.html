@@ -1,0 +1,99 @@
+<div x-data="pieChart()" x-init="init()" class="h-full flex flex-col lg:flex-row items-center justify-center gap-8">
+    <div class="w-full lg:w-2/5 flex justify-center">
+        <div style="width: 220px; height: 220px;">
+            <canvas x-ref="canvas"></canvas>
+        </div>
+    </div>
+    <div class="w-full lg:w-3/5">
+        <div class="grid grid-cols-2 gap-3">
+            <template x-for="(item, index) in legendItems" :key="index">
+                <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors cursor-default">
+                    <div class="w-3 h-3 rounded-full mr-3 flex-shrink-0" :style="'background-color:' + item.color"></div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate" x-text="item.label"></p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-white" x-text="item.value + '%'"></p>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script>
+function pieChart() {
+    return {
+        chart: null,
+        legendItems: [],
+        init() {
+            const labels = {{.labels | safeJS}};
+            const values = {{.values | safeJS}};
+            const isDark = document.documentElement.classList.contains('dark');
+
+            const colors = isDark ? [
+                '#818CF8',  // indigo-400
+                '#A78BFA',  // purple-400
+                '#F472B6',  // pink-400
+                '#FBBF24'   // amber-400
+            ] : [
+                '#6366F1',  // indigo
+                '#8B5CF6',  // purple
+                '#EC4899',  // pink
+                '#F59E0B'   // amber
+            ];
+
+            this.legendItems = labels.map((label, i) => ({
+                label: label,
+                value: values[i],
+                color: colors[i]
+            }));
+
+            const ctx = this.$refs.canvas.getContext('2d');
+
+            this.chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(17, 24, 39, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: isDark ? 'rgba(129, 140, 248, 0.5)' : 'rgba(99, 102, 241, 0.5)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            displayColors: true,
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            boxPadding: 4,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%',
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true
+                    }
+                }
+            });
+        }
+    }
+}
+</script>

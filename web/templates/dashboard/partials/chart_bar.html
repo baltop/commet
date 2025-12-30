@@ -1,0 +1,109 @@
+<div x-data="barChart()" x-init="init()" class="h-full">
+    <canvas x-ref="canvas"></canvas>
+</div>
+
+<script>
+function barChart() {
+    return {
+        chart: null,
+        init() {
+            const ctx = this.$refs.canvas.getContext('2d');
+            const isDark = document.documentElement.classList.contains('dark');
+
+            // Create gradients for each bar
+            const createGradient = (ctx, color1, color2) => {
+                const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+                gradient.addColorStop(0, color1);
+                gradient.addColorStop(1, color2);
+                return gradient;
+            };
+
+            const colors = isDark ? [
+                createGradient(ctx, 'rgba(129, 140, 248, 1)', 'rgba(129, 140, 248, 0.6)'),
+                createGradient(ctx, 'rgba(167, 139, 250, 1)', 'rgba(167, 139, 250, 0.6)'),
+                createGradient(ctx, 'rgba(192, 132, 252, 1)', 'rgba(192, 132, 252, 0.6)'),
+                createGradient(ctx, 'rgba(244, 114, 182, 1)', 'rgba(244, 114, 182, 0.6)'),
+                createGradient(ctx, 'rgba(251, 146, 180, 1)', 'rgba(251, 146, 180, 0.6)')
+            ] : [
+                createGradient(ctx, 'rgba(99, 102, 241, 1)', 'rgba(99, 102, 241, 0.6)'),
+                createGradient(ctx, 'rgba(139, 92, 246, 1)', 'rgba(139, 92, 246, 0.6)'),
+                createGradient(ctx, 'rgba(168, 85, 247, 1)', 'rgba(168, 85, 247, 0.6)'),
+                createGradient(ctx, 'rgba(236, 72, 153, 1)', 'rgba(236, 72, 153, 0.6)'),
+                createGradient(ctx, 'rgba(244, 114, 182, 1)', 'rgba(244, 114, 182, 0.6)')
+            ];
+
+            const textColor = isDark ? '#9CA3AF' : '#9CA3AF';
+            const gridColor = isDark ? 'rgba(75, 85, 99, 0.5)' : 'rgba(243, 244, 246, 1)';
+
+            this.chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{.labels | safeJS}},
+                    datasets: [{
+                        label: '판매량',
+                        data: {{.values | safeJS}},
+                        backgroundColor: colors,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        barThickness: 40,
+                        maxBarThickness: 50
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(17, 24, 39, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: isDark ? 'rgba(167, 139, 250, 0.5)' : 'rgba(139, 92, 246, 0.5)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.toLocaleString() + '개';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: gridColor,
+                                drawBorder: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+}
+</script>

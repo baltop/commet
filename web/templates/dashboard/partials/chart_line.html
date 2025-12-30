@@ -1,0 +1,111 @@
+<div x-data="lineChart()" x-init="init()" class="h-full">
+    <canvas x-ref="canvas"></canvas>
+</div>
+
+<script>
+function lineChart() {
+    return {
+        chart: null,
+        init() {
+            const ctx = this.$refs.canvas.getContext('2d');
+            const isDark = document.documentElement.classList.contains('dark');
+
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+            gradient.addColorStop(0, isDark ? 'rgba(129, 140, 248, 0.3)' : 'rgba(99, 102, 241, 0.3)');
+            gradient.addColorStop(1, isDark ? 'rgba(129, 140, 248, 0.01)' : 'rgba(99, 102, 241, 0.01)');
+
+            const textColor = isDark ? '#9CA3AF' : '#9CA3AF';
+            const gridColor = isDark ? 'rgba(75, 85, 99, 0.5)' : 'rgba(243, 244, 246, 1)';
+            const lineColor = isDark ? 'rgb(129, 140, 248)' : 'rgb(99, 102, 241)';
+
+            this.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{.labels | safeJS}},
+                    datasets: [{
+                        label: '매출',
+                        data: {{.values | safeJS}},
+                        borderColor: lineColor,
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: lineColor,
+                        pointBorderColor: isDark ? '#1f2937' : '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: lineColor,
+                        pointHoverBorderColor: isDark ? '#1f2937' : '#fff',
+                        pointHoverBorderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(17, 24, 39, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: isDark ? 'rgba(129, 140, 248, 0.5)' : 'rgba(99, 102, 241, 0.5)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return '₩' + context.raw.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: gridColor,
+                                drawBorder: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    size: 12
+                                },
+                                callback: function(value) {
+                                    if (value >= 1000000) {
+                                        return '₩' + (value / 1000000).toFixed(0) + 'M';
+                                    }
+                                    return '₩' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+}
+</script>
