@@ -1,0 +1,27 @@
+{
+  "name": "commet",
+  "version": "1.0.0",
+  "description": "Go Gin 프레임워크 기반의 웹 애플리케이션으로, HTMX와 Alpine.js를 활용한 현대적인 프론트엔드와 PostgreSQL 데이터베이스를 사용합니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baltop/commet.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/baltop/commet/issues"
+  },
+  "homepage": "https://github.com/baltop/commet#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}
