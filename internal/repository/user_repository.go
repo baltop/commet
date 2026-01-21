@@ -5,9 +5,21 @@ import (
 	"gorm.io/gorm"
 )
 
+// UserRepositoryInterface defines the contract for user data access
+type UserRepositoryInterface interface {
+	Create(user *models.User) error
+	FindByEmail(email string) (*models.User, error)
+	FindByID(id uint) (*models.User, error)
+	ExistsByEmail(email string) (bool, error)
+}
+
+// UserRepository implements UserRepositoryInterface
 type UserRepository struct {
 	db *gorm.DB
 }
+
+// Compile-time check to ensure UserRepository implements UserRepositoryInterface
+var _ UserRepositoryInterface = (*UserRepository)(nil)
 
 func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}

@@ -18,11 +18,11 @@ var (
 )
 
 type AuthService struct {
-	userRepo  *repository.UserRepository
+	userRepo  repository.UserRepositoryInterface
 	jwtConfig config.JWTConfig
 }
 
-func NewAuthService(userRepo *repository.UserRepository, jwtConfig config.JWTConfig) *AuthService {
+func NewAuthService(userRepo repository.UserRepositoryInterface, jwtConfig config.JWTConfig) *AuthService {
 	return &AuthService{
 		userRepo:  userRepo,
 		jwtConfig: jwtConfig,
